@@ -13,7 +13,7 @@ SPIDER_MODULES = ["imdb_scrap.spiders"]
 NEWSPIDER_MODULE = "imdb_scrap.spiders"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = ""
+#USER_AGENT = UserAgent().random
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
