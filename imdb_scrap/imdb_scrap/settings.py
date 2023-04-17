@@ -11,7 +11,12 @@ BOT_NAME = "imdb_scrap"
 
 SPIDER_MODULES = ["imdb_scrap.spiders"]
 NEWSPIDER_MODULE = "imdb_scrap.spiders"
-
+RANDOMIZE_DOWNLOAD_DELAY = True
+DOWNLOAD_DELAY = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
+COOKIES_ENABLED = False
+RETRY_TIMES = 3
+HTTPCACHE_ENABLED = True 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = ""
