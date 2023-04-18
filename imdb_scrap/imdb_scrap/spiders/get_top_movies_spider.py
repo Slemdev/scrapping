@@ -54,7 +54,7 @@ class GetTopMoviesSpider(CrawlSpider):
             casting = response.css(".credit_summary_item a::text").extract()
             rating = response.css(".ratingValue strong span::text").extract_first()
             description = response.css(".summary_text::text").extract_first()
-            year = response.css(".title_wrapper a::text").extract_first()
+            year = response.css(".sc-afe43def-4 .ipc-inline-list__item").extract_first()
             genre = response.css(".subtext a::text").extract()
             duration = response.css(".subtext time::text").extract_first()
             # casting = movie.css("ipc-metadata-list-item__content-container").extract_first()
