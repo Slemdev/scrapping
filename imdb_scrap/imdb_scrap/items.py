@@ -14,4 +14,6 @@ class ImdbScrapItem(scrapy.Item):
     casting = scrapy.Field()
     rating = scrapy.Field()
     link = scrapy.Field()
-    
+    description = scrapy.Field()
+    genre = scrapy.Field()
+    duration = scrapy.Field()
