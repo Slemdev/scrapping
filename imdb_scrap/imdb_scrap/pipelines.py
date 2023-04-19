@@ -5,9 +5,19 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+import pymongo
+from dotenv import load_dotenv
+import os
+load_dotenv()
+ATLAS_KEY=os.getenv('ATLAS_KEY')
 
-
-class ImdbScrapPipeline:
-    def process_item(self, item, spider):
+class ImdbScrapPipeline(object) :
+    def __init__ (self):
+        self.conn=pymongo.MongoClient(ATLAS_KEY)
+        db=self.conn['liste_films_et_series_250']
+        self.collection =db['liste_films_et_series_250']
+        
+    def process_item(self,item,spider):
+        self.collection.insert_one(dict(item))
         return item
+    
