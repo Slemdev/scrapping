@@ -1,35 +1,12 @@
-
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from ..items import ImdbScrapItem
 from fake_useragent import UserAgent
 
-# class GetTopMoviesSpider(scrapy.Spider):
-#     name = "get_top_movies"
-#     allowed_domains = ["imdb.com"]
-#     start_urls = ["https://www.imdb.com/chart/top/?ref_=nv_mv_250"]
-
-#     def parse(self, response):
-#         items = ImdbScrapItem()
-#         all_movies = response.css(".lister-list tr")
         
-#         for movie in all_movies:
-#             title = response.css(".titleColumn a::text").extract()
-#             casting = response.css(".titleColumn a::attr(title)").extract()
-#             rating = response.css(".ratingColumn.imdbRating strong::text").extract()
-#             link = movie.css("a::attr(href)").extract_first()
-            
-#             items['title'] = title
-#             items['casting'] = casting
-#             items['rating'] = rating
-#             items['link'] = link
-            
-#             yield items
-#             pass
-        
-
 class GetTopMoviesSpider(CrawlSpider):
+    """This spider is used to get the top 250 movies from IMDB"""
     name = "crawler_get_top_movies"
     allowed_domains = ["imdb.com"]
     start_urls = ["https://www.imdb.com/chart/top/?ref_=nv_mv_250"]
@@ -37,33 +14,69 @@ class GetTopMoviesSpider(CrawlSpider):
     user_agent = UserAgent().random
     
     rules = (
-        Rule(LinkExtractor(restrict_xpaths=('.titleColumn > a')), callback="parse_item", follow=False),
+        Rule(LinkExtractor(restrict_css='.titleColumn > a'), callback="parse_item", follow=False),
     )
 
     def start_requests(self):
-        yield scrapy.Request(url=self.start_urls[0], headers={
-            'User-Agent': self.user_agent
-        })
+        """This method is used to set the user agent for the request"""
+        yield scrapy.Request(url='https://www.imdb.com/chart/top/?ref_=nv_mv_250', 
+                             headers={
+                                'User-Agent': self.user_agent
+                            }
+        )
 
     def parse_item(self, response):
-        #all_movies = response.css(".titleColumn a")
+        """This method is used to extract the data from the response"""
+        items = ImdbScrapItem()
         
-        #for movie in all_movies:
-            #items = ImdbScrapItem()
-            title = response.css(".title_wrapper h1::text").extract_first()
-            casting = response.css(".credit_summary_item a::text").extract()
-            rating = response.css(".ratingValue strong span::text").extract_first()
-            description = response.css(".summary_text::text").extract_first()
-            year = response.css(".sc-afe43def-4 .ipc-inline-list__item").extract_first()
-            genre = response.css(".subtext a::text").extract()
-            duration = response.css(".subtext time::text").extract_first()
-            # casting = movie.css("ipc-metadata-list-item__content-container").extract_first()
-            # rating = movie.css("sc-bde20123-1").extract_first()
+        #items['title'] = response.css('.sc-52d569c6-0.kNzJA-D.sc-afe43def-3.EpHJp::text').extract_first()
+        items['original_title'] = response.css(".sc-afe43def-0.hnYaOZ span::text").extract()
+        items['rating'] = response.css(".sc-bde20123-1.iZlgcd::text").extract_first()
+        items['genre'] = response.css(".ipc-chip__text::text").extract()
+        items['duration'] = response.css(".ipc-inline-list__item::text").extract_first()
+        items['description'] = response.css(".sc-5f699a2-1.cfkOAP::text").extract_first().strip()
+        items['casting'] = response.css('li[data-testid="title-pc-principal-credit"]:last-child a::text')[1:].extract()
+        items['year'] = response.xpath("(//div[@class='sc-52d569c6-0 kNzJA-D']//li)[1]/a/text()").extract_first()
+        items['public'] = response.xpath("(//div[@class='sc-52d569c6-0 kNzJA-D']//li)[2]/a/text()").extract_first()
+        items['country'] = response.css("[data-testid='title-details-origin'] a::text").extract()
+        items['language'] = response.css("[data-testid='title-details-languages'] li a::text").extract()
+        yield items
+        
+        
+class GetTopSeriesSpider(CrawlSpider):
+    """This spider is used to get the top 250 series from IMDB"""
+    name = "crawler_get_top_series"
+    allowed_domains = ["imdb.com"]
+    start_urls = ["https://www.imdb.com/chart/toptv/?ref_=nv_tvv_250"]
     
-            
-            #items['title'] = title
-            # items['casting'] = casting
-            # items['rating'] = rating
-            #items['link'] = link
-            
-            yield {"title": title, "casting": casting, "rating": rating, "description": description, "year": year, "genre": genre, "duration": duration}
+    user_agent = UserAgent().random
+    
+    rules = (
+        Rule(LinkExtractor(restrict_css='.titleColumn > a'), callback="parse_item", follow=False),
+    )
+
+    def start_requests(self):
+        """This method is used to set the user agent for the request"""
+        yield scrapy.Request(url='https://www.imdb.com/chart/toptv/?ref_=nv_tvv_250', 
+                             headers={
+                                'User-Agent': self.user_agent
+                            }
+        )
+
+    def parse_item(self, response):
+        """This method is used to extract the data from the response"""
+        items = ImdbScrapItem()
+        
+        #items['title'] = response.css('.sc-52d569c6-0.kNzJA-D.sc-afe43def-3.EpHJp::text').extract_first()
+        items['original_title'] = response.css(".sc-afe43def-0.hnYaOZ span::text").extract()
+        items['rating'] = response.css(".sc-bde20123-1.iZlgcd::text").extract_first()
+        items['genre'] = response.css(".ipc-chip__text::text").extract()
+        items['duration'] = response.xpath("(//div[@class='sc-52d569c6-0 kNzJA-D']//li)[4]/text()").extract_first()
+        items['description'] = response.css(".sc-5f699a2-1.cfkOAP::text").extract_first().strip()
+        items['casting'] = response.css('li[data-testid="title-pc-principal-credit"]:last-child a::text')[1:].extract()
+        items['year'] = response.xpath("(//div[@class='sc-52d569c6-0 kNzJA-D']//li)[2]/a/text()").extract_first()
+        items['public'] = response.xpath("(//div[@class='sc-52d569c6-0 kNzJA-D']//li)[3]/a/text()").extract_first()
+        items['country'] = response.css("[data-testid='title-details-origin'] a::text").extract()
+        items['language'] = response.css("[data-testid='title-details-languages'] li a::text").extract()
+        
+        yield items
