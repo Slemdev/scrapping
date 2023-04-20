@@ -1,7 +1,8 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
 # Created by https://www.toptal.com/developers/gitignore/api/database,dotenv,macos,python,venv,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=database,dotenv,macos,python,venv,visualstudiocode
-*.txt
+notes.txt
+
 ### Database ###
 *.accdb
 *.db
@@ -11,6 +12,7 @@
 *.sqlite3
 *.db-shm
 *.db-wal
+*.csv
 
 ### dotenv ###
 .env
