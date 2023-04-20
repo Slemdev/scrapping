@@ -15,7 +15,7 @@ class ImdbScrapPipeline(object) :
     def __init__ (self):
         self.conn=pymongo.MongoClient(ATLAS_KEY)
         db=self.conn['top_250']
-        self.collection =db['top_250_movies_test']
+        self.collection =db['top_test']
         
     def process_item(self,item,spider):
         self.collection.insert_one(dict(item))
